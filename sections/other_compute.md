@@ -1,24 +1,5 @@
 # Other Compute
 
-- [Other Compute](#other-compute)
-  - [What is Docker?](#what-is-docker)
-    - [Where Docker images are stored?](#where-docker-images-are-stored)
-    - [Docker versus Virtual Machines](#docker-versus-virtual-machines)
-  - [ECS](#ecs)
-  - [Fargate](#fargate)
-  - [ECR](#ecr)
-  - [What’s serverless?](#whats-serverless)
-  - [Why AWS Lambda ?](#why-aws-lambda-)
-    - [Benefits of AWS Lambda](#benefits-of-aws-lambda)
-    - [AWS Lambda language support](#aws-lambda-language-support)
-    - [AWS Lambda Pricing: example](#aws-lambda-pricing-example)
-  - [Amazon API Gateway](#amazon-api-gateway)
-  - [AWS Batch](#aws-batch)
-  - [Batch vs Lambda](#batch-vs-lambda)
-  - [Amazon Lightsail](#amazon-lightsail)
-  - [Lambda Summary](#lambda-summary)
-  - [Other Compute Summary](#other-compute-summary)
-
 ## What is Docker?
 
 - Docker is a software development platform to deploy apps
@@ -32,44 +13,51 @@
   - Works with any language, any OS, any technology
 - Scale containers up and down very quickly (seconds)
 
-### Where Docker images are stored?
+### Where are Docker images stored?
 
-- Docker images are stored in Docker Repositories
+- **Docker Hub**: Centralized public repository for storing Docker images.
 - Public: Docker Hub <https://hub.docker.com/>
-  - Find base images for many technologies or OS:
-  - Ubuntu
-  - MySQL
-  - NodeJS, Java…
-- Private: Amazon ECR (Elastic Container Registry)
+- Private: **Amazon ECR (Elastic Container Registry)**: AWS service for storing, managing, and deploying container images.
 
 ### Docker versus Virtual Machines
 
 - Docker is ”sort of” a virtualization technology, but not exactly
 - Resources are shared with the host => many containers on one server
 
-## ECS
+| **Docker Containers**                  | **Virtual Machines (VMs)**                |
+| -------------------------------------- | ----------------------------------------- |
+| Lightweight, shares the host OS kernel | Heavier, includes full OS                 |
+| Starts in seconds                      | Slower startup (minutes)                  |
+| Portable, fast scaling                 | Not as portable, more resource-intensive  |
+| Best for microservices & modern apps   | Best for running multiple OS environments |
 
-- ECS = Elastic Container Service
+## ECS (Elastic Container Service)
+
+- Fully managed container orchestration service.
+- Supports Docker containers.
 - Launch Docker containers on AWS
-- You must provision & maintain the infrastructure (the EC2 instances)
 - AWS takes care of starting / stopping containers
-- Has integrations with the Application Load Balancer
+- **Two launch modes**: **EC2** (self-managed instances) and **Fargate** (serverless).
+- Provides integration with IAM, VPC, ELB, and ECR.
 
 ## Fargate
 
-- Launch Docker containers on AWS
-- You do not provision the infrastructure (no EC2 instances to manage) – simpler!
-- Serverless offering
+- Serverless compute engine for containers, works with ECS and EKS.
+- No need to manage EC2 instances.
+- Pay for resources used (vCPU and memory).
 - AWS just runs containers for you based on the CPU / RAM you need
 
-## ECR
+## ECR (Elastic Container Registry)
 
-- Elastic Container Registry
-- Private Docker Registry on AWS
+- Fully managed Docker container registry.
+- Stores, manages, and secures Docker images.
+- Integrated with **ECS**, **EKS**, and **Fargate** for easy deployment.
 - This is where you store your Docker images so they can be run by ECS or Fargate
 
-## What’s serverless?
+## What’s Serverless?
 
+- No need to provision, scale, or manage servers.
+- Resources are automatically provisioned and scaled by AWS.
 - Serverless is a new paradigm in which the developers don’t have to manage servers anymore…
 - They just deploy code
 - They just deploy… functions !
@@ -77,8 +65,13 @@
 - Serverless was pioneered by AWS Lambda but now also includes anything that’s managed: “databases, messaging, storage, etc.”
 - Serverless does not mean there are no servers…
 - it means you just don’t manage / provision / see them
+- Ideal for event-driven and stateless applications.
 
-## Why AWS Lambda ?
+## Why AWS Lambda?
+
+- Serverless compute service to run code without managing infrastructure.
+- Executes code in response to events (e.g., API calls, file uploads).
+- Scales automatically and you only pay for usage.
 
 | EC2                                                | Lambda                                    |
 | -------------------------------------------------- | ----------------------------------------- |
@@ -89,6 +82,10 @@
 
 ### Benefits of AWS Lambda
 
+- **No server management**: AWS handles the infrastructure.
+- **Automatic scaling**: Scales based on event triggers.
+- **Flexible scaling**: Runs from a few requests per day to thousands per second.
+- **Event-driven architecture**: Ideal for apps that need to respond to events.
 - Easy Pricing:
   - Pay per request and compute time
   - Free tier of 1,000,000 AWS Lambda requests and 400,000 GBs of compute time
@@ -99,27 +96,27 @@
 - Easy to get more resources per functions (up to 10GB of RAM!)
 - Increasing RAM will also improve CPU and network!
 
-### AWS Lambda language support
+### AWS Lambda Language Support
 
-- Node.js (JavaScript)
+- Node.js
 - Python
-- Java (Java 8 compatible)
-- C# (.NET Core)
-- Golang
-- C# / Powershell
 - Ruby
-- Custom Runtime API (community supported, example Rust)
+- Java
+- Go
+- .NET Core
+- custom runtime (via container images) (community supported, example Rust)
 - Lambda Container Image
   - The container image must implement the Lambda Runtime API
   - ECS / Fargate is preferred for running arbitrary Docker images
 
-### AWS Lambda Pricing: example
+### AWS Lambda Pricing: Example
 
+- Based on number of requests and execution time.
 - You can find overall pricing information here: <https://aws.amazon.com/lambda/pricing/>
-- Pay per calls:
-  - First 1,000,000 requests are free
-  - $0.20 per 1 million requests thereafter ($0.0000002 per request)
-- Pay per duration: (in increment of 1 ms)
+- First **1 million requests/month** are free.
+- After that, **$0.20 per million requests**.
+- **Execution duration**: $0.00001667 for every GB-second used (first 400,000 GB-seconds free per month).
+- - Pay per duration: (in increment of 1 ms)
   - 400,000 GB-seconds of compute time per month for FREE
   - == 400,000 seconds if function is 1GB RAM
   - == 3,200,000 seconds if function is 128 MB RAM
@@ -128,15 +125,17 @@
 
 ## Amazon API Gateway
 
-- Example: building a serverless API
-- Fully managed service for developers to easily create, publish, maintain, monitor, and secure APIs
+- Managed service for creating, publishing, and monitoring REST, HTTP, and WebSocket APIs.
+- Integrates with AWS Lambda for fully serverless APIs.
 - Serverless and scalable
-- Supports RESTful APIs and WebSocket APIs
 - Support for security, user authentication, API throttling, API keys, monitoring.
+- **Throttling**, **caching**, and **authorization** features built-in.
 
 ## AWS Batch
 
-- Fully managed batch processing at any scale
+- Fully managed service for running batch processing workloads.
+- Dynamically provisions compute resources based on job requirements.
+- Suitable for large-scale data processing, such as machine learning and rendering tasks.
 - Efficiently run 100,000s of computing batch jobs on AWS
 - A “batch” job is a job with a start and an end (opposed to continuous)
 - Batch will dynamically launch EC2 instances or Spot Instances
@@ -147,12 +146,13 @@
 
 ## Batch vs Lambda
 
-| Batch                                                  | Lambda                       |
-| ------------------------------------------------------ | ---------------------------- |
-| No time limit                                          | Time limit                   |
-| Any runtime as long as it’s packaged as a Docker image | Limited runtime              |
-| Rely on EBS / instance store for disk space            | Limited temporary disk space |
-| Relies on EC2 (can be managed by AWS)                  | Serverless                   |
+| **AWS Batch**                               | **AWS Lambda**                             |
+| ------------------------------------------- | ------------------------------------------ |
+| Designed for **batch processing**           | Designed for **event-driven** architecture |
+| Handles large-scale compute jobs            | Executes short-lived functions             |
+| Custom EC2 instances or Fargate tasks       | Fully serverless, no server management     |
+| Jobs may take minutes to hours              | Max execution time of 15 minutes           |
+| Rely on EBS / instance store for disk space | Limited temporary disk space               |
 
 ## Amazon Lightsail
 
@@ -190,7 +190,3 @@
 - ECR: Private Docker Images Repository
 - Batch: run batch jobs on AWS across managed EC2 instances
 - Lightsail: predictable & low pricing for simple application & DB stacks
-
-* * *
-
-[<img align="center" src="../images/back-arrow.png" height="20" width="20"/> Databases & Analytics](./databases.md) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[<img align="center" src="../images/list.png" height="30" width="30"/> List](../README.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[Deploying and Managing Infrastructure at Scale <img align="center" src="../images/forward-arrow.png" height="20" width="20"/>](./deploying.md)

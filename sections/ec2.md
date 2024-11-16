@@ -2,19 +2,21 @@
 
 - [EC2: Virtual Machines](#ec2-virtual-machines)
   - [What is Amazon EC2?](#what-is-amazon-ec2)
-    - [EC2 sizing & configuration options](#ec2-sizing--configuration-options)
+    - [EC2 Sizing \& Configuration Options](#ec2-sizing--configuration-options)
     - [EC2 User Data](#ec2-user-data)
     - [EC2 Instance Types - Overview](#ec2-instance-types---overview)
-      - [General Purpose](#general-purpose)
-      - [Compute Optimized](#compute-optimized)
-      - [Memory Optimized](#memory-optimized)
-      - [Storage Optimized](#storage-optimized)
-    - [EC2 Instance Types: example](#ec2-instance-types-example)
+      - [General Purpose Instances](#general-purpose-instances)
+      - [Compute Optimized Instances](#compute-optimized-instances)
+      - [Memory Optimized Instances](#memory-optimized-instances)
+      - [Storage Optimized Instances](#storage-optimized-instances)
+    - [EC2 Instance Types: Example](#ec2-instance-types-example)
   - [Introduction to Security Groups](#introduction-to-security-groups)
-    - [Deeper Dive](#deeper-dive)
+    - [Common Use Cases](#common-use-cases)
+  - [Deeper Dive](#deeper-dive)
     - [Security Groups Diagram](#security-groups-diagram)
-    - [Good to know](#good-to-know)
-  - [Classic Ports to know](#classic-ports-to-know)
+    - [Examples of Security Group Rules](#examples-of-security-group-rules)
+    - [Good to Know](#good-to-know)
+  - [Classic Ports to Know](#classic-ports-to-know)
   - [EC2 Instance Launch Types](#ec2-instance-launch-types)
     - [On Demand Instance](#on-demand-instance)
     - [Reserved Instances](#reserved-instances)
@@ -23,150 +25,182 @@
     - [Dedicated Hosts](#dedicated-hosts)
     - [Dedicated Instances](#dedicated-instances)
     - [Capacity Reservations](#capacity-reservations)
-  - [Which purchasing option is right for me?](#which-purchasing-option-is-right-for-me)
+    - [EC2 Instance Launch Types Comparison](#ec2-instance-launch-types-comparison)
+  - [Which purchasing option is right for my use case?](#which-purchasing-option-is-right-for-my-use-case)
   - [Price Comparison Example – m4.large – us-east-1](#price-comparison-example--m4large--us-east-1)
   - [Shared Responsibility Model for EC2](#shared-responsibility-model-for-ec2)
   - [EC2 Section – Summary](#ec2-section--summary)
 
 ## What is Amazon EC2?
 
-Amazon Elastic Compute Cloud (Amazon EC2) provides scalable computing capacity in the Amazon Web Services (AWS) Cloud.
+- **Amazon Elastic Compute Cloud (EC2)** is a scalable compute service that allows users to rent virtual servers in the cloud.
+- It provides flexibility to scale compute resources up or down based on demand, offering a cost-effective solution for applications with variable workloads.
+- Key features include:
+  - **On-Demand Instances**: Pay for compute capacity by the hour or second, with no long-term commitments.
+  - **Reserved Instances**: Make a one-time payment for a significant discount on instance usage over a one- or three-year term.
+  - **Spot Instances**: Bid for unused EC2 capacity at a potentially lower price, allowing cost savings for flexible workloads.
 
-- EC2 is one of the most popular of AWS’ offering
-- EC2 = Elastic Compute Cloud = Infrastructure as a Service
-- It mainly consists in the capability of :
-  - Renting virtual machines (EC2)
-  - Storing data on virtual drives (EBS)
-  - Distributing load across machines (ELB)
-  - Scaling the services using an auto-scaling group (ASG)
-- Knowing EC2 is fundamental to understand how the Cloud works
+### EC2 Sizing & Configuration Options
 
-### EC2 sizing & configuration options
-
-- Operating System (OS): Linux, Windows or Mac OS
-- How much compute power & cores (CPU)
-- How much random-access memory (RAM)
-- How much storage space:
-  - Network-attached (EBS & EFS)
-  - hardware (EC2 Instance Store)
-- Network card: speed of the card, Public IP address
-- Firewall rules: **security group**
-- Bootstrap script (configure at first launch): EC2 User Data
+- EC2 allows for customized sizing and configurations, which include:
+  - **Instance Type**: Selecting the appropriate type based on the application's performance requirements.
+  - **Storage Options**: Using Amazon EBS for persistent block storage or instance store for temporary storage.
+  - **Networking**: Configuring VPCs, subnets, and security groups to control access and manage traffic.
+  - **Elastic Load Balancing**: Distributing incoming traffic across multiple EC2 instances to enhance availability and fault tolerance.
+  - **Auto Scaling**: Automatically adjusting the number of instances based on demand, ensuring the application has the necessary resources.
 
 ### EC2 User Data
 
-- It is possible to bootstrap our instances using an **EC2 User data** script.
-- **bootstrapping** means launching commands when a machine starts
+- **User data** is a powerful feature for automating the setup of EC2 instances.
+- It can be specified at instance launch and is executed on the instance when it first boots.
+- bootstrapping means launching commands when a machine starts
 - That script is **only run once** at the instance **first start**
-- EC2 user data is used to automate boot tasks such as:
-  - Installing updates
-  - Installing software
-  - Downloading common files from the internet
-  - Anything you can think of
-- The EC2 User Data Script runs with the root user
+- **Common use cases include**:
+  - Installing software packages (e.g., `yum install httpd -y` for Apache).
+  - Downloading configuration files or scripts from Amazon S3.
+  - Configuring system settings and services (e.g., starting an application server).
 
 ### EC2 Instance Types - Overview
 
-- You can use different types of EC2 instances that are optimised for different use cases (<https://aws.amazon.com/ec2/instance-types/>)
-  - [General Purpose](#general-purpose)
-  - [Compute Optimized](#compute-optimized)
-  - [Memory Optimized](#memory-optimized)
-  - [Storage Optimized](#storage-optimized)
-  - Accelerated Computing
+Amazon EC2 offers a variety of instance types, each designed to meet specific application requirements.(<https://aws.amazon.com/ec2/instance-types/>)
 
-- AWS has the following naming convention: m5.2xlarge
-- m: instance class
-- 5: generation (AWS improves them over time)
-- 2xlarge: size within the instance class
+#### General Purpose Instances
 
-#### General Purpose
+- General purpose instances provide a balanced mix of compute, memory, and network resources.
+- They are suitable for a variety of workloads and can handle different application types effectively.
+- **Use Cases**:
+  - Web servers and applications
+  - Small to medium-sized databases
+  - Development and testing environments
+  - Enterprise applications
 
-- Great for a diversity of workloads such as web servers or code repositories
-- Balance between:
-  - Compute
-  - Memory
-  - Networking
+| **Instance Type** | **vCPUs** | **Memory (GiB)** | **Network Performance** | **Storage** |
+| ----------------- | --------- | ---------------- | ----------------------- | ----------- |
+| **t4g.micro**     | 2         | 1                | Up to 5 Gigabit         | EBS only    |
+| **t3.micro**      | 2         | 1                | Up to 5 Gigabit         | EBS only    |
+| **m5.large**      | 2         | 8                | Up to 10 Gigabit        | EBS only    |
+| **m5.xlarge**     | 4         | 16               | Up to 10 Gigabit        | EBS only    |
 
-#### Compute Optimized
+#### Compute Optimized Instances
 
-- Great for compute-intensive tasks that require high performance processors:
-  - Batch processing workloads
-  - Media transcoding
-  - High performance web servers
-  - High performance computing (HPC)
-  - Scientific modeling & machine learning
-  - Dedicated gaming servers
+- Compute optimized instances are designed for applications that require high-performance processors and are well-suited for compute-intensive workloads.
+- **Use Cases**:
+  - High-performance web servers
+  - Batch processing
+  - Data analytics
+  - Machine learning inference
 
-#### Memory Optimized
+| **Instance Type** | **vCPUs** | **Memory (GiB)** | **Network Performance** | **Storage** |
+| ----------------- | --------- | ---------------- | ----------------------- | ----------- |
+| **c5.large**      | 2         | 4                | Up to 10 Gigabit        | EBS only    |
+| **c5.xlarge**     | 4         | 8                | Up to 10 Gigabit        | EBS only    |
+| **c5.2xlarge**    | 8         | 16               | Up to 10 Gigabit        | EBS only    |
+| **c5n.9xlarge**   | 36        | 96               | 10 Gigabit              | EBS only    |
 
-- Fast performance for workloads that process large data sets in memory
-- Use cases:
-  - High performance, relational/non-relational databases
-  - Distributed web scale cache stores
-  - In-memory databases optimized for BI (business intelligence)
-  - Applications performing real-time processing of big unstructured data
+#### Memory Optimized Instances
 
-#### Storage Optimized
+- Memory optimized instances provide high memory bandwidth and are optimized for applications that require large amounts of memory.
+- **Use Cases**:
+  - High-performance databases (e.g., SAP HANA)
+  - In-memory caches (e.g., Redis, Memcached)
+  - Real-time big data analytics
+  - Data mining applications
 
-- Great for storage-intensive tasks that require high, sequential read and write access to large data sets on local storage
-- Use cases:
-  - High frequency online transaction processing (OLTP) systems
-  - Relational & NoSQL databases
-  - Cache for in-memory databases (for example, Redis)
+| **Instance Type** | **vCPUs** | **Memory (GiB)** | **Network Performance** | **Storage** |
+| ----------------- | --------- | ---------------- | ----------------------- | ----------- |
+| **r5.large**      | 2         | 16               | Up to 10 Gigabit        | EBS only    |
+| **r5.xlarge**     | 4         | 32               | Up to 10 Gigabit        | EBS only    |
+| **r5.4xlarge**    | 16        | 128              | Up to 10 Gigabit        | EBS only    |
+| **r5b.12xlarge**  | 48        | 384              | 10 Gigabit              | EBS only    |
+
+#### Storage Optimized Instances
+
+- Storage optimized instances are designed for applications that require high, sequential read and write access to large datasets.
+- **Use Cases**:
   - Data warehousing applications
-  - Distributed file systems
+  - Hadoop distributed computing
+  - High-frequency trading applications
+  - NoSQL databases (e.g., Cassandra)
 
-### EC2 Instance Types: example
+| **Instance Type** | **vCPUs** | **Memory (GiB)** | **Network Performance** | **Storage**         |
+| ----------------- | --------- | ---------------- | ----------------------- | ------------------- |
+| **i3.large**      | 2         | 15               | Up to 10 Gigabit        | 1 x 475 GB NVMe SSD |
+| **i3.xlarge**     | 4         | 30               | Up to 10 Gigabit        | 1 x 950 GB NVMe SSD |
+| **i3.2xlarge**    | 8         | 61               | Up to 10 Gigabit        | 1 x 1.9 TB NVMe SSD |
+| **d2.8xlarge**    | 36        | 244              | Up to 10 Gigabit        | 12 x 2 TB HDD       |
 
-| Instance    | vCPU | Mem (GiB) | Storage          | Network Performance | EBS Bandwidth (Mbps) |
-| ----------- | ---- | --------- | ---------------- | ------------------- | -------------------- |
-| t2.micro    | 1    | 1         | EBS-Only         | Low to Moderate     |
-| t2.xlarge   | 4    | 16        | EBS-Only         | Moderate            |
-| c5d.4xlarge | 16   | 32        | 1 x 400 NVMe SSD | Up to 10 Gbps       | 4,750                |
-| r5.16xlarge | 64   | 512       | EBS Only         | 20 Gbps             | 13,600               |
-| m5.8xlarge  | 32   | 128       | EBS Only         | 10 Gbps             | 6,800                |
+### EC2 Instance Types: Example
+
+Here's a quick overview of some example instance types in each category, along with their characteristics:
+
+| **Instance Type** | **vCPUs** | **Memory (GiB)** | **Storage**         | **Use Case**                                                                                                               |
+| ----------------- | --------- | ---------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **t3.micro**      | 2         | 1                | EBS only            | General-purpose applications with burstable performance; suitable for low-traffic web servers or development environments. |
+| **c5.large**      | 2         | 4                | EBS only            | Compute-intensive applications like gaming, web servers, and machine learning inference.                                   |
+| **m5.xlarge**     | 4         | 16               | EBS only            | Balanced workloads, such as small databases and caching fleets. Ideal for web applications.                                |
+| **r5.xlarge**     | 4         | 32               | EBS only            | Memory-intensive applications such as databases, in-memory caches, and analytics workloads.                                |
+| **i3.2xlarge**    | 8         | 61               | 1 x 2.5 TB NVMe SSD | Storage-intensive applications like NoSQL databases, data warehousing, and big data analytics.                             |
+| **p3.2xlarge**    | 8         | 61               | EBS only            | GPU-accelerated computing for machine learning, high-performance computing (HPC), and graphics-intensive applications.     |
 
 t2.micro is part of the AWS free tier (up to 750 hours per month)
 
 ## Introduction to Security Groups
 
-- Security Groups are the fundamental of network security in AWS
-- They control how traffic is allowed into or out of our EC2 Instances.
-- Security groups only contain allow rules
-- Security groups rules can reference by IP or by security group
+- **Security Groups** are **virtual firewalls** that control inbound and outbound traffic to Amazon EC2 instances.
+- They act at the instance level, not the subnet level, and provide a way to manage access to resources within a VPC (Virtual Private Cloud).
+- Security groups can be associated with multiple instances and can be modified at any time, allowing for flexible management of network access.
+- **Key Features**:
+  - By default, all inbound traffic is denied, and all outbound traffic is allowed.
+  - You can specify rules based on protocol (TCP, UDP, ICMP), port number, and source IP address or CIDR block.
 
-### Deeper Dive
+### Common Use Cases
 
-- Security groups are acting as a “firewall” on EC2 instances
-- They regulate:
-  - Access to Ports
-  - Authorised IP ranges – IPv4 and IPv6
-  - Control of inbound network (from other to the instance)
-  - Control of outbound network (from the instance to other)
+- Restricting access to an application server (allowing only specific IPs).
+- Allowing traffic from specific ports (e.g., HTTP/HTTPS).
+- Isolating database instances from public access.
+
+## Deeper Dive
+
+- **Inbound Rules**: Define the traffic allowed into your instances.
+- **Outbound Rules**: Define the traffic allowed out from your instances.
+- Each rule includes:
+  - **Type**: The protocol used (e.g., HTTP, SSH).
+  - **Protocol**: The protocol number (TCP = 6, UDP = 17).
+  - **Port Range**: The port(s) affected by the rule.
+  - **Source/Destination**: The IP address or CIDR range from which traffic is allowed.
 
 ### Security Groups Diagram
 
-![ Security Groups Diagram](../images/Security_Groups_Diagram.png)
+![Security Groups Diagram](../images/Security_Groups_Diagram.png)
 
-### Good to know
+### Examples of Security Group Rules
 
-- Can be attached to multiple instances
-- Locked down to a region / VPC combination
-- Does live “outside” the EC2 – if traffic is blocked the EC2 instance won’t see it
-- It’s good to maintain one separate security group for SSH access
-- If your application is not accessible (time out), then it’s a security group issue
-- If your application gives a “connection refused“ error, then it’s an application error or it’s not launched
-- All inbound traffic is **blocked** by default
-- All outbound traffic is **authorized** by default
+| **Rule Type** | **Protocol** | **Port Range** | **Source/Destination**      |
+| ------------- | ------------ | -------------- | --------------------------- |
+| Inbound Rule  | TCP          | 22             | 203.0.113.0/24 (SSH Access) |
+| Inbound Rule  | TCP          | 80             | 0.0.0.0/0 (HTTP Access)     |
+| Outbound Rule | All Traffic  | All            | 0.0.0.0/0                   |
 
-## Classic Ports to know
+### Good to Know
 
-- 22 = SSH (Secure Shell) - log into a Linux instance
-- 21 = FTP (File Transfer Protocol) – upload files into a file share
-- 22 = SFTP (Secure File Transfer Protocol) – upload files using SSH
-- 80 = HTTP – access unsecured websites
-- 443 = HTTPS – access secured websites
-- 3389 = RDP (Remote Desktop Protocol) – log into a Windows instance
+- **Limits**: Each security group can have up to 60 inbound and 60 outbound rules by default (this limit can be increased by requesting through AWS Support).
+- **Default Security Group**: When you create a VPC, a default security group is automatically created, which allows all outbound traffic and denies all inbound traffic by default.
+- **Multiple Security Groups**: You can assign multiple security groups to a single EC2 instance, enabling fine-grained control over traffic.
+- **Security Best Practices**:
+  - Apply the principle of least privilege (only allow necessary traffic).
+  - Regularly review and audit security group rules.
+  - Use descriptive names and tags for easy management.
+
+## Classic Ports to Know
+
+| **Port Number** | **Protocol** | **Service**         | **Description**                                                                                     |
+| --------------- | ------------ | ------------------- | --------------------------------------------------------------------------------------------------- |
+| 20              | TCP          | FTP (Data Transfer) | Used for transferring files over FTP.                                                               |
+| 21              | TCP          | FTP (Control)       | Used for controlling file transfer sessions.                                                        |
+| 22              | TCP          | SSH                 | Secure Shell for secure logins and command execution.                                               |
+| 80              | TCP          | HTTP                | Hypertext Transfer Protocol for web traffic.                                                        |
+| 443             | TCP          | HTTPS               | Secure HTTP for secure web traffic.                                                                 |
+| 3389            | TCP          | RDP                 | Used for Remote Desktop Protocol, allowing users to connect to and control remote Windows machines. |
 
 ## EC2 Instance Launch Types
 
@@ -231,7 +265,7 @@ t2.micro is part of the AWS free tier (up to 750 hours per month)
 ### Dedicated Hosts
 
 - A physical server with EC2 instance capacity fully dedicated to your use
-- Allows you address compliance requirements and use your existing server- bound software licenses (per-socket, per-core, pe—VM software licenses)
+- Allows you to address compliance requirements and use your existing server- bound software licenses (per-socket, per-core, pe—VM software licenses)
 - Purchasing Options:
   - On-demand – pay per second for active Dedicated Host
   - Reserved - 1 or 3 years (No Upfront, Partial Upfront, All Upfront)
@@ -254,37 +288,65 @@ t2.micro is part of the AWS free tier (up to 750 hours per month)
 - You’re charged at On-Demand rate whether you run instances or not
 - Suitable for short-term, uninterrupted workloads that needs to be in a specific AZ
 
-## Which purchasing option is right for me?
+### EC2 Instance Launch Types Comparison
 
-- On demand: coming and staying in resort whenever we like, we pay the full price
-- Reserved: like planning ahead and if we plan to stay for a long time, we may get a good discount.
-- Savings Plans: pay a certain amount per hour for certain period and stay in any room type (e.g., King, Suite, Sea View, …)
-- Spot instances: the hotel allows people to bid for the empty rooms and the highest bidder keeps the rooms. You can get kicked out at any time
-- Dedicated Hosts: We book an entire building of the resort
-- Capacity Reservations: you book a room for a period with full price even you don’t stay in it
+| **Launch Type**           | **Cost Structure**                                                                  | **Payment Options**                                    | **Commitment**                | **Use Case**                                                 | **Flexibility**                                                          |
+| ------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------ | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| **On-Demand Instances**   | - Linux/Windows: per second after the first minute <br> - Other OS: billed per hour | No upfront payment                                     | No long-term commitment       | Short-term and unpredictable workloads                       | High flexibility; can start/stop anytime                                 |
+| **Reserved Instances**    | Up to 72% discount compared to On-Demand                                            | - No Upfront <br> - Partial Upfront <br> - All Upfront | 1 year or 3 years             | Steady-state applications (e.g., databases)                  | Reserved capacity in a specific region or AZ                             |
+| **Savings Plans**         | Up to 72% discount based on long-term usage                                         | Commit to a certain usage amount                       | 1 year or 3 years             | Applications with predictable usage patterns                 | Flexible across instance size, OS, and tenancy                           |
+| **Spot Instances**        | Discount up to 90% compared to On-Demand                                            | Pay the Spot price                                     | No commitment required        | Cost-sensitive, resilient workloads (e.g., batch jobs)       | Instances can be terminated anytime if spot price exceeds your max price |
+| **Dedicated Hosts**       | Most expensive; pay per second for active host                                      | - On-Demand <br> - Reserved (1 or 3 years)             | Long-term commitment possible | Compliance-heavy applications or complex licensing models    | Full control over server; ideal for BYOL scenarios                       |
+| **Dedicated Instances**   | Higher than shared instances; not the most expensive                                | On-Demand pricing                                      | No long-term commitment       | Workloads needing dedicated hardware but can share resources | Limited control over instance placement                                  |
+| **Capacity Reservations** | Billed at On-Demand rates regardless of instance running                            | No upfront payment                                     | No time commitment            | Ensures EC2 capacity availability in a specific AZ           | Can create/cancel anytime; no discounts on billing                       |
+
+## Which purchasing option is right for my use case?
+
+- **On-Demand Instances**:
+  - Staying at a resort whenever we want and paying the full price for each night.
+  - Ideal for a startup running a web application with unpredictable traffic spikes.
+- **Reserved Instances**:
+  - Planning a long vacation in advance, allowing us to get a significant discount for booking ahead.
+  - Best for a company operating a database server that requires constant uptime for a year.
+- **Savings Plans**:
+  - Committing to a set amount per hour for a specified duration while enjoying any room type
+  - Suitable for a SaaS provider that anticipates steady usage of compute resources over three years.
+- **Spot Instances**:
+  - Bidding for available rooms; the highest bidder secures the room, but they can be asked to leave at any moment.
+  - Perfect for a research team processing large data sets where jobs can be paused and resumed.
+- **Dedicated Hosts**:
+  - Renting an entire wing of the resort exclusively for ourselves.
+  - Appropriate for a financial institution needing to comply with strict regulatory requirements and using custom software licenses.
+- **Dedicated Instances**:
+  - Having a private room that's solely ours but sharing some amenities with other guests.
+  - Great for a business running non-critical applications that need some level of hardware isolation.
+- **Capacity Reservations**:
+  - Booking a room for a set period at full price, even if we don’t end up using it.
+  - Useful for an enterprise ensuring EC2 capacity for a new product launch in a specific availability zone.
 
 ## Price Comparison Example – m4.large – us-east-1
 
-| Price Type                             | Price (per hour)                           |
-| -------------------------------------- | ------------------------------------------ |
-| On-Demand                              | $0.10                                      |
-| Spot Instance (Spot Price)             | $0.038 - $0.039 (up to 61% off)            |
-| Reserved Instance (1 year)             | $0.062 (No Upfront) - $0.058 (All Upfront) |
-| Reserved Instance (3 years)            | $0.043 (No Upfront) - $0.037 (All Upfront) |
-| EC2 Savings Plan (1 year)              | $0.062 (No Upfront) - $0.058 (All Upfront) |
-| Reserved Convertible Instance (1 year) | $0.071 (No Upfront) - $0.066 (All Upfront) |
-| Dedicated Host                         | On-Demand Price                            |
-| Dedicated Host Reservation             | Up to 70% off                              |
-| Capacity Reservations                  | On-Demand Price                            |
+| **Launch Type**           | **Hourly Price**                     | **Monthly Price (Approx.)** | **Notes**                                                        |
+| ------------------------- | ------------------------------------ | --------------------------- | ---------------------------------------------------------------- |
+| **On-Demand Instance**    | $0.096 per hour                      | $69.12                      | Pay-as-you-go pricing. Ideal for short-term usage.               |
+| **Reserved Instances**    | $0.054 per hour (1-year term)        | $39.24                      | Commit to one year for a significant discount.                   |
+| **Savings Plans**         | $0.058 per hour (1-year term)        | $41.76                      | Flexible savings plan applicable to any instance type.           |
+| **Spot Instances**        | $0.028 per hour (varies with demand) | $20.16                      | Pricing varies; can be interrupted. Best for flexible workloads. |
+| **Dedicated Hosts**       | $0.12 per hour (per host)            | $86.40                      | Dedicated physical server; pricing per host.                     |
+| **Dedicated Instances**   | $0.096 per hour                      | $69.12                      | Similar to on-demand but on dedicated hardware.                  |
+| **Capacity Reservations** | $0.096 per hour                      | $69.12                      | Reserved capacity at on-demand pricing.                          |
 
 ## Shared Responsibility Model for EC2
 
-| AWS                                      | USER                                                                                   |
-| ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| Infrastructure (global network security) | Security Groups rules                                                                  |
-| Isolation on physical hosts              | Operating-system patches and updates                                                   |
-| Replacing faulty hardware                | Software and utilities installed on the EC2 instance                                   |
-| Compliance validation                    | IAM Roles assigned to EC2 & IAM user access management, Data security on your instance |
+| **Responsibility**          | **AWS Responsibilities**                                                                                 | **User Responsibilities**                                                 |
+| --------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Infrastructure Security** | The security of the underlying infrastructure, including hardware, software, networking, and facilities. | Securing the EC2 instances, including operating systems and applications. |
+| **Physical Security**       | Ensures physical security of data centers where EC2 instances run.                                       | N/A                                                                       |
+| **Network Security**        | Implements security measures for the network, including firewalls and DDoS protection.                   | Configuring security groups, network ACLs, and VPC settings.              |
+| **Data Protection**         | Provides encryption options for data at rest and in transit.                                             | Managing data encryption and access control.                              |
+| **Access Management**       | Offers IAM services to manage access to AWS resources.                                                   | Configuring IAM users, roles, and policies for access management.         |
+| **Compliance**              | Complies with various compliance standards and certifications for infrastructure.                        | Compliance related to the applications and data hosted on EC2 instances.  |
+| **Patch Management**        | Provides a secure and up-to-date infrastructure.                                                         | Applying patches and updates to the operating system and applications.    |
 
 ## EC2 Section – Summary
 
@@ -294,7 +356,3 @@ t2.micro is part of the AWS free tier (up to 750 hours per month)
 - SSH: start a terminal into our EC2 Instances (port 22)
 - EC2 Instance Role: link to IAM roles
 - Purchasing Options: On-Demand, Spot, Reserved (Standard + Convertible + Scheduled), Dedicated Host, Dedicated Instance
-
-* * *
-
-[<img align="center" src="../images/back-arrow.png" height="20" width="20"/> IAM: Identity Access & Management](./iam.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[<img align="center" src="../images/list.png" height="30" width="30"/> List](../README.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[EC2 Instance Storage <img align="center" src="../images/forward-arrow.png" height="20" width="20"/>](./ec2_storage.md)

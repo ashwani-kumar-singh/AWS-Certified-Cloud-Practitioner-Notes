@@ -43,7 +43,7 @@
 - Availability Zones: Made of multiple data centers
 - Edge Locations (Points of Presence): for content delivery as close as possible to users
 - More at: <https://infrastructure.aws/>
-  
+
 ### Global Applications in AWS
 
 - **Global DNS: Route 53**
@@ -71,7 +71,7 @@
 
 ![Route 53](./images/../../images/Route_53.png)
 
-<!-- 
+<!--
 ```mermaid
 sequenceDiagram
     participant Web browser
@@ -121,7 +121,7 @@ Need to know them at a high-level for the Cloud Practitioner Exam
 - 216 Point of Presence globally (edge locations)
 - DDoS protection (because worldwide), integration with Shield, AWS Web Application Firewall
 - Source: <https://aws.amazon.com/cloudfront/features/?nc=sn&loc=2>
-  
+
 ### CloudFront - Origins
 
 - S3 bucket
@@ -205,7 +205,7 @@ Need to know them at a high-level for the Cloud Practitioner Exam
 - High-bandwidth and secure connection to the parent AWS Region
 - No additional charges or service agreements
 - Use cases: Smart Cities, ML-assisted diagnostics, Connected Vehicles, Interactive Live Video Streams, AR/VR, Real-time Gaming
-  
+
 ## AWS Local Zones
 
 - Places AWS compute, storage, database, and other selected AWS services closer to end users to run latency-sensitive
@@ -215,7 +215,7 @@ applications
 - Example:
   - AWS Region: N. Virginia (us-east-1)
   - AWS Local Zones: Boston, Chicago, Dallas, Houston, Miami
-  
+
 ## Global Applications - Summary
 
 - Global DNS: Route 53
@@ -236,7 +236,3 @@ applications
 - AWS Local Zones
   - Bring AWS resources (compute, database, storage, …) closer to your users
   - Good for latency-sensitive applications
-
-* * *
-
-[<img align="center" src="../images/back-arrow.png" height="20" width="20"/> Deploying and Managing Infrastructure at Scale](./deploying.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[<img align="center" src="../images/list.png" height="30" width="30"/> List](../README.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[Cloud Integration <img align="center" src="../images/forward-arrow.png" height="20" width="20"/>](./cloud_integration.md)

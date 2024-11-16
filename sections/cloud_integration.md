@@ -26,6 +26,8 @@
 
 - Oldest AWS offering (over 10 years old)
 - Fully managed service (~serverless), use to decouple applications
+- Allows decoupling of applications by sending and receiving messages asynchronously.
+- Supports standard queues (unlimited throughput) and FIFO queues (ordered processing).
 - Scales from 1 message per second to 10,000s per second
 - Default retention of messages: 4 days, maximum of 14 days
 - No limit to how many messages can be in the queue
@@ -76,7 +78,3 @@
   - No message retention
 - Kinesis: real-time data streaming, persistence and analysis
 - Amazon MQ: managed Apache MQ in the cloud (MQTT, AMQP.. protocols)
-
-* * *
-
-[<img align="center" src="../images/back-arrow.png" height="20" width="20"/> Global Infrastructure](./global_infrastructure.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[<img align="center" src="../images/list.png" height="30" width="30"/> List](../README.md)&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[Cloud Monitoring <img align="center" src="../images/forward-arrow.png" height="20" width="20"/>](./cloud_monitoring.md)

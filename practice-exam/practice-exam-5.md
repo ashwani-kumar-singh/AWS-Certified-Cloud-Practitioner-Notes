@@ -45,6 +45,10 @@ If this practice exam has been helpful to you please share it with others and re
 
     <details markdown=1><summary markdown='span'>Answer</summary>
       Correct answer: C
+
+      Explanation:
+      - Pricing is per instance-hour consumed for each instance, from the time an instance is launched until it is terminated or stopped.
+      - Each partial instance-hour consumed will be billed per-second for Linux, Windows, Windows with SQL Enterprise, Windows with SQL Standard, and Windows with SQL Web Instances, and as a full hour for all other instance types.
     </details>
 
 5. What is the AWS Support feature that allows customers to manage support cases programmatically?
@@ -457,7 +461,7 @@ If this practice exam has been helpful to you please share it with others and re
 
 45. What should you do if you see resources, which you don’t remember creating, in the AWS Management Console? (Choose TWO)
     - A. Stop all running services and open an investigation.
-    - B. Give your root account password to AWS Support so that they can assistin troubleshooting and securing the account.
+    - B. Give your root account password to AWS Support so that they can assist in troubleshooting and securing the account.
     - C. Check the AWS CloudTrail logs and delete all IAM users that have access to your resources.
     - D. Open an investigation and delete any potentially compromised IAM users.
     - E. Change your AWS root account password and the passwords of any IAM users.
